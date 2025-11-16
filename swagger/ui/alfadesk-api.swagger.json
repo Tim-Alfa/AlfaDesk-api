@@ -27,7 +27,7 @@
     },
     {
       "name": "uzivatel",
-      "description": "Operácie s manažmentom relácia užívateľa a s užívateľmi"
+      "description": "Operácie s manažmentom relácie užívateľa a s užívateľmi"
     }
   ],
   "paths": {
