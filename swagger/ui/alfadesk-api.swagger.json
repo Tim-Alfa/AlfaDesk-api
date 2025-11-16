@@ -1,0 +1,1614 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "AlfaDesk API - špecifikácia OpenAPI 3.1",
+    "description": "Tento dokument podrobne špecifikuje aplikačné rozhranie systému AlfaDesk (ďaľej ako \"API\") v technickom a vecnom rozsahu nutnom pre správnu integráciu v aplikácii smerujúcej na užívateľa, v akejkoľvek forme. API poskytuje základné služby manažmentu užívateľov a relácie užívateľa, CRUD operácie nad požiadavkami (tzv. ticket) a k nim spojené dáta, ako sú prílohy, odpovede, metadáta a poskytuje prídavné služby spojené s prevádzkou systému, ako napríklad správa tém, kategórii, front, kalendárov a tak podobne.\n\nAPI rešpektuje princípy RESTful architektúry, aj keď zhoda nie je zaručená.\n\nSlužba je poskytovaná tak, ako je, bez žiadnych záruk alebo garancií, či už implicitných alebo výslovných.\n\nUžitočné odkazy:\n- [Produkčné prostredie](https://alfadesk.esec.sk/api)\n- [Testovacie prostredie](https://test.alfadesk.esec.sk/api)",
+    "contact": {
+      "email": "pernisch1@ucm.sk"
+    },
+    "license": {
+      "name": "MIT Licencia",
+      "url": "https://raw.githubusercontent.com/Tim-Alfa/AlfaDesk-api/refs/heads/prod/LICENSE"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://test.alfadesk.esec.sk/api"
+    },
+    {
+      "url": "https://alfadesk.esec.sk/api"
+    }
+  ],
+  "tags": [
+    {
+      "name": "ticket",
+      "description": "Operácie s požiadavkou a s ňou spojenými dátami"
+    },
+    {
+      "name": "uzivatel",
+      "description": "Operácie s manažmentom relácia užívateľa a s užívateľmi"
+    }
+  ],
+  "paths": {
+    "/ticket": {
+      "post": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Vytvorí novú požiadavku.",
+        "description": "Vytvorí novú požiadavku so zadanými parametrami.",
+        "operationId": "pridatTicket",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fronta": {
+                    "type": "number",
+                    "format": "uint64",
+                    "example": 44
+                  },
+                  "zariadenie": {
+                    "type": "number",
+                    "format": "uint64",
+                    "example": 12
+                  },
+                  "zariadenie_nazov": {
+                    "type": "string",
+                    "example": "Dell 32 Plus (S3225QS)",
+                    "maxLength": 256
+                  },
+                  "umiestnenie": {
+                    "type": "string",
+                    "example": "Budova S-06 m. č. 129",
+                    "maxLength": 256
+                  },
+                  "popis": {
+                    "type": "string",
+                    "example": "PC je zapnutý, ale obrazovka je čierna, ani nesvieti indikátor."
+                  },
+                  "prilohy_zadavatel": {
+                    "type": "object",
+                    "properties": {
+                      "filename": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "format": "binary"
+                        }
+                      }
+                    }
+                  },
+                  "odstranenie_predpoklad": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-07-21T17:23:56Z"
+                  },
+                  "odstranenie_skutocne": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-07-21T17:23:56Z"
+                  },
+                  "zaciatok_riesenia": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-07-21T17:23:56Z"
+                  },
+                  "koniec_riesenia": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-07-21T17:23:56Z"
+                  },
+                  "vyriesene": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "nh_predpoklad": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 3.4
+                  },
+                  "nh_skutocne": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 3
+                  },
+                  "vyriesil": {
+                    "type": "number",
+                    "format": "uint64",
+                    "example": 44
+                  },
+                  "popis_riesenia": {
+                    "type": "string",
+                    "example": "Na monitore bolo poškodené tlačidlo na zapínanie. Výmena monitora za nový kus."
+                  },
+                  "prilohy_riesitel": {
+                    "type": "object",
+                    "properties": {
+                      "filename": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "format": "binary"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Ticket bol vytvorený v poriadku",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "uint64",
+                      "example": 453
+                    },
+                    "vytvoreny": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "aktualizovany": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "vytvoril": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "uint64",
+                          "example": 12
+                        },
+                        "meno": {
+                          "type": "string",
+                          "example": "Janko",
+                          "maxLength": 64
+                        },
+                        "priezvisko": {
+                          "type": "string",
+                          "example": "Hraško",
+                          "maxLength": 124
+                        },
+                        "cele_meno": {
+                          "type": "string",
+                          "example": "Mgr. Janko Hraško, MPH",
+                          "maxLength": 200
+                        },
+                        "pozicia": {
+                          "type": "string",
+                          "example": "grafik",
+                          "maxLength": 82
+                        },
+                        "osobne_cislo": {
+                          "type": "string",
+                          "example": 124658,
+                          "maxLength": 24
+                        },
+                        "telefonne_cislo": {
+                          "type": "string",
+                          "maxLength": 16,
+                          "example": "+421910123456"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "maxLength": 82,
+                          "example": "janko.hrasko@example.com"
+                        },
+                        "heslo": {
+                          "type": "string",
+                          "example": "TajneHeslo123"
+                        },
+                        "rola": {
+                          "type": "string",
+                          "enum": [
+                            "uzivatel",
+                            "technik",
+                            "admin"
+                          ]
+                        },
+                        "aktivny": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "posledne_prihlasenie": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        },
+                        "posledna_zmena_hesla": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        }
+                      }
+                    },
+                    "aktualizoval": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "uint64",
+                          "example": 12
+                        },
+                        "meno": {
+                          "type": "string",
+                          "example": "Janko",
+                          "maxLength": 64
+                        },
+                        "priezvisko": {
+                          "type": "string",
+                          "example": "Hraško",
+                          "maxLength": 124
+                        },
+                        "cele_meno": {
+                          "type": "string",
+                          "example": "Mgr. Janko Hraško, MPH",
+                          "maxLength": 200
+                        },
+                        "pozicia": {
+                          "type": "string",
+                          "example": "grafik",
+                          "maxLength": 82
+                        },
+                        "osobne_cislo": {
+                          "type": "string",
+                          "example": 124658,
+                          "maxLength": 24
+                        },
+                        "telefonne_cislo": {
+                          "type": "string",
+                          "maxLength": 16,
+                          "example": "+421910123456"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "maxLength": 82,
+                          "example": "janko.hrasko@example.com"
+                        },
+                        "heslo": {
+                          "type": "string",
+                          "example": "TajneHeslo123"
+                        },
+                        "rola": {
+                          "type": "string",
+                          "enum": [
+                            "uzivatel",
+                            "technik",
+                            "admin"
+                          ]
+                        },
+                        "aktivny": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "posledne_prihlasenie": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        },
+                        "posledna_zmena_hesla": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        }
+                      }
+                    },
+                    "fronta": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "uint64",
+                          "example": 44
+                        },
+                        "nazov": {
+                          "type": "string",
+                          "example": "Hardvér - L1",
+                          "maxLength": 128
+                        }
+                      }
+                    },
+                    "zariadenie": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "uint64",
+                          "example": 8362
+                        },
+                        "nazov": {
+                          "type": "string",
+                          "example": "Monitor bežný",
+                          "maxLength": 256
+                        },
+                        "nh_predpoklad": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 2.5
+                        },
+                        "nh_priemer": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 2.8
+                        }
+                      }
+                    },
+                    "zariadenie_nazov": {
+                      "type": "string",
+                      "example": "Dell 32 Plus (S3225QS)",
+                      "maxLength": 256
+                    },
+                    "umiestnenie": {
+                      "type": "string",
+                      "example": "Budova S-06 m. č. 129",
+                      "maxLength": 256
+                    },
+                    "popis": {
+                      "type": "string",
+                      "example": "PC je zapnutý, ale obrazovka je čierna, ani nesvieti indikátor."
+                    },
+                    "prilohy_zadavatel": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "format": "uint64",
+                            "example": 9378
+                          },
+                          "nazov": {
+                            "type": "string",
+                            "example": "popis1.jpg",
+                            "maxLength": 128
+                          },
+                          "url": {
+                            "type": "string",
+                            "example": "https://example.com/media/e3900ee0-3d1f-4ab1-aa6d-8d9fd267b7bf.jpg"
+                          }
+                        }
+                      }
+                    },
+                    "odstranenie_predpoklad": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "odstranenie_skutocne": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "zaciatok_riesenia": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "koniec_riesenia": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "vyriesene": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "nh_predpoklad": {
+                      "type": "number",
+                      "format": "float",
+                      "example": 3.4
+                    },
+                    "nh_skutocne": {
+                      "type": "number",
+                      "format": "float",
+                      "example": 3
+                    },
+                    "vyriesil": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "uint64",
+                          "example": 12
+                        },
+                        "meno": {
+                          "type": "string",
+                          "example": "Janko",
+                          "maxLength": 64
+                        },
+                        "priezvisko": {
+                          "type": "string",
+                          "example": "Hraško",
+                          "maxLength": 124
+                        },
+                        "cele_meno": {
+                          "type": "string",
+                          "example": "Mgr. Janko Hraško, MPH",
+                          "maxLength": 200
+                        },
+                        "pozicia": {
+                          "type": "string",
+                          "example": "grafik",
+                          "maxLength": 82
+                        },
+                        "osobne_cislo": {
+                          "type": "string",
+                          "example": 124658,
+                          "maxLength": 24
+                        },
+                        "telefonne_cislo": {
+                          "type": "string",
+                          "maxLength": 16,
+                          "example": "+421910123456"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "maxLength": 82,
+                          "example": "janko.hrasko@example.com"
+                        },
+                        "heslo": {
+                          "type": "string",
+                          "example": "TajneHeslo123"
+                        },
+                        "rola": {
+                          "type": "string",
+                          "enum": [
+                            "uzivatel",
+                            "technik",
+                            "admin"
+                          ]
+                        },
+                        "aktivny": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "posledne_prihlasenie": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        },
+                        "posledna_zmena_hesla": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        }
+                      }
+                    },
+                    "popis_riesenia": {
+                      "type": "string",
+                      "example": "Na monitore bolo poškodené tlačidlo na zapínanie. Výmena monitora za nový kus."
+                    },
+                    "prilohy_riesitel": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "format": "uint64",
+                            "example": 9378
+                          },
+                          "nazov": {
+                            "type": "string",
+                            "example": "popis1.jpg",
+                            "maxLength": 128
+                          },
+                          "url": {
+                            "type": "string",
+                            "example": "https://example.com/media/e3900ee0-3d1f-4ab1-aa6d-8d9fd267b7bf.jpg"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nie ste prihlasený/identita neznáma"
+          },
+          "403": {
+            "description": "Nedostatočné oprávnenie"
+          },
+          "500": {
+            "description": "Nastala chyba definovaná v tele odpovede",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "kod": {
+                      "type": "integer",
+                      "format": "uint64",
+                      "example": 43
+                    },
+                    "popis": {
+                      "type": "string",
+                      "example": "Užívateľ so zadaným ID neexistuje."
+                    },
+                    "traceId": {
+                      "type": "string",
+                      "format": "uuidv7",
+                      "example": "019a6841-0d59-7d7e-8d9e-3623ee018dfb"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ticket/{id}": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Získa požiadavku podľa ID.",
+        "description": "Vráti požiadavku podľa zadaného ID.",
+        "operationId": "ziskatTicket",
+        "responses": {
+          "200": {
+            "description": "Ticket načítaný v tele odpovede.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "uint64",
+                      "example": 453
+                    },
+                    "vytvoreny": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "aktualizovany": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "vytvoril": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "uint64",
+                          "example": 12
+                        },
+                        "meno": {
+                          "type": "string",
+                          "example": "Janko",
+                          "maxLength": 64
+                        },
+                        "priezvisko": {
+                          "type": "string",
+                          "example": "Hraško",
+                          "maxLength": 124
+                        },
+                        "cele_meno": {
+                          "type": "string",
+                          "example": "Mgr. Janko Hraško, MPH",
+                          "maxLength": 200
+                        },
+                        "pozicia": {
+                          "type": "string",
+                          "example": "grafik",
+                          "maxLength": 82
+                        },
+                        "osobne_cislo": {
+                          "type": "string",
+                          "example": 124658,
+                          "maxLength": 24
+                        },
+                        "telefonne_cislo": {
+                          "type": "string",
+                          "maxLength": 16,
+                          "example": "+421910123456"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "maxLength": 82,
+                          "example": "janko.hrasko@example.com"
+                        },
+                        "heslo": {
+                          "type": "string",
+                          "example": "TajneHeslo123"
+                        },
+                        "rola": {
+                          "type": "string",
+                          "enum": [
+                            "uzivatel",
+                            "technik",
+                            "admin"
+                          ]
+                        },
+                        "aktivny": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "posledne_prihlasenie": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        },
+                        "posledna_zmena_hesla": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        }
+                      }
+                    },
+                    "aktualizoval": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "uint64",
+                          "example": 12
+                        },
+                        "meno": {
+                          "type": "string",
+                          "example": "Janko",
+                          "maxLength": 64
+                        },
+                        "priezvisko": {
+                          "type": "string",
+                          "example": "Hraško",
+                          "maxLength": 124
+                        },
+                        "cele_meno": {
+                          "type": "string",
+                          "example": "Mgr. Janko Hraško, MPH",
+                          "maxLength": 200
+                        },
+                        "pozicia": {
+                          "type": "string",
+                          "example": "grafik",
+                          "maxLength": 82
+                        },
+                        "osobne_cislo": {
+                          "type": "string",
+                          "example": 124658,
+                          "maxLength": 24
+                        },
+                        "telefonne_cislo": {
+                          "type": "string",
+                          "maxLength": 16,
+                          "example": "+421910123456"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "maxLength": 82,
+                          "example": "janko.hrasko@example.com"
+                        },
+                        "heslo": {
+                          "type": "string",
+                          "example": "TajneHeslo123"
+                        },
+                        "rola": {
+                          "type": "string",
+                          "enum": [
+                            "uzivatel",
+                            "technik",
+                            "admin"
+                          ]
+                        },
+                        "aktivny": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "posledne_prihlasenie": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        },
+                        "posledna_zmena_hesla": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        }
+                      }
+                    },
+                    "fronta": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "uint64",
+                          "example": 44
+                        },
+                        "nazov": {
+                          "type": "string",
+                          "example": "Hardvér - L1",
+                          "maxLength": 128
+                        }
+                      }
+                    },
+                    "zariadenie": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "uint64",
+                          "example": 8362
+                        },
+                        "nazov": {
+                          "type": "string",
+                          "example": "Monitor bežný",
+                          "maxLength": 256
+                        },
+                        "nh_predpoklad": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 2.5
+                        },
+                        "nh_priemer": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 2.8
+                        }
+                      }
+                    },
+                    "zariadenie_nazov": {
+                      "type": "string",
+                      "example": "Dell 32 Plus (S3225QS)",
+                      "maxLength": 256
+                    },
+                    "umiestnenie": {
+                      "type": "string",
+                      "example": "Budova S-06 m. č. 129",
+                      "maxLength": 256
+                    },
+                    "popis": {
+                      "type": "string",
+                      "example": "PC je zapnutý, ale obrazovka je čierna, ani nesvieti indikátor."
+                    },
+                    "prilohy_zadavatel": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "format": "uint64",
+                            "example": 9378
+                          },
+                          "nazov": {
+                            "type": "string",
+                            "example": "popis1.jpg",
+                            "maxLength": 128
+                          },
+                          "url": {
+                            "type": "string",
+                            "example": "https://example.com/media/e3900ee0-3d1f-4ab1-aa6d-8d9fd267b7bf.jpg"
+                          }
+                        }
+                      }
+                    },
+                    "odstranenie_predpoklad": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "odstranenie_skutocne": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "zaciatok_riesenia": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "koniec_riesenia": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-07-21T17:23:56Z"
+                    },
+                    "vyriesene": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "nh_predpoklad": {
+                      "type": "number",
+                      "format": "float",
+                      "example": 3.4
+                    },
+                    "nh_skutocne": {
+                      "type": "number",
+                      "format": "float",
+                      "example": 3
+                    },
+                    "vyriesil": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "uint64",
+                          "example": 12
+                        },
+                        "meno": {
+                          "type": "string",
+                          "example": "Janko",
+                          "maxLength": 64
+                        },
+                        "priezvisko": {
+                          "type": "string",
+                          "example": "Hraško",
+                          "maxLength": 124
+                        },
+                        "cele_meno": {
+                          "type": "string",
+                          "example": "Mgr. Janko Hraško, MPH",
+                          "maxLength": 200
+                        },
+                        "pozicia": {
+                          "type": "string",
+                          "example": "grafik",
+                          "maxLength": 82
+                        },
+                        "osobne_cislo": {
+                          "type": "string",
+                          "example": 124658,
+                          "maxLength": 24
+                        },
+                        "telefonne_cislo": {
+                          "type": "string",
+                          "maxLength": 16,
+                          "example": "+421910123456"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "maxLength": 82,
+                          "example": "janko.hrasko@example.com"
+                        },
+                        "heslo": {
+                          "type": "string",
+                          "example": "TajneHeslo123"
+                        },
+                        "rola": {
+                          "type": "string",
+                          "enum": [
+                            "uzivatel",
+                            "technik",
+                            "admin"
+                          ]
+                        },
+                        "aktivny": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "posledne_prihlasenie": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        },
+                        "posledna_zmena_hesla": {
+                          "type": "string",
+                          "format": "date-time",
+                          "example": "2025-07-21T17:23:56Z"
+                        }
+                      }
+                    },
+                    "popis_riesenia": {
+                      "type": "string",
+                      "example": "Na monitore bolo poškodené tlačidlo na zapínanie. Výmena monitora za nový kus."
+                    },
+                    "prilohy_riesitel": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "format": "uint64",
+                            "example": 9378
+                          },
+                          "nazov": {
+                            "type": "string",
+                            "example": "popis1.jpg",
+                            "maxLength": 128
+                          },
+                          "url": {
+                            "type": "string",
+                            "example": "https://example.com/media/e3900ee0-3d1f-4ab1-aa6d-8d9fd267b7bf.jpg"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nie ste prihlasený/identita neznáma"
+          },
+          "403": {
+            "description": "Nedostatočné oprávnenie"
+          },
+          "500": {
+            "description": "Nastala chyba definovaná v tele odpovede",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "kod": {
+                      "type": "integer",
+                      "format": "uint64",
+                      "example": 43
+                    },
+                    "popis": {
+                      "type": "string",
+                      "example": "Užívateľ so zadaným ID neexistuje."
+                    },
+                    "traceId": {
+                      "type": "string",
+                      "format": "uuidv7",
+                      "example": "019a6841-0d59-7d7e-8d9e-3623ee018dfb"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TicketR": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "uint64",
+            "example": 453
+          },
+          "vytvoreny": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          },
+          "aktualizovany": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          },
+          "vytvoril": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "example": 12
+              },
+              "meno": {
+                "type": "string",
+                "example": "Janko",
+                "maxLength": 64
+              },
+              "priezvisko": {
+                "type": "string",
+                "example": "Hraško",
+                "maxLength": 124
+              },
+              "cele_meno": {
+                "type": "string",
+                "example": "Mgr. Janko Hraško, MPH",
+                "maxLength": 200
+              },
+              "pozicia": {
+                "type": "string",
+                "example": "grafik",
+                "maxLength": 82
+              },
+              "osobne_cislo": {
+                "type": "string",
+                "example": 124658,
+                "maxLength": 24
+              },
+              "telefonne_cislo": {
+                "type": "string",
+                "maxLength": 16,
+                "example": "+421910123456"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "maxLength": 82,
+                "example": "janko.hrasko@example.com"
+              },
+              "heslo": {
+                "type": "string",
+                "example": "TajneHeslo123"
+              },
+              "rola": {
+                "type": "string",
+                "enum": [
+                  "uzivatel",
+                  "technik",
+                  "admin"
+                ]
+              },
+              "aktivny": {
+                "type": "boolean",
+                "example": true
+              },
+              "posledne_prihlasenie": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-07-21T17:23:56Z"
+              },
+              "posledna_zmena_hesla": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-07-21T17:23:56Z"
+              }
+            }
+          },
+          "aktualizoval": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "example": 12
+              },
+              "meno": {
+                "type": "string",
+                "example": "Janko",
+                "maxLength": 64
+              },
+              "priezvisko": {
+                "type": "string",
+                "example": "Hraško",
+                "maxLength": 124
+              },
+              "cele_meno": {
+                "type": "string",
+                "example": "Mgr. Janko Hraško, MPH",
+                "maxLength": 200
+              },
+              "pozicia": {
+                "type": "string",
+                "example": "grafik",
+                "maxLength": 82
+              },
+              "osobne_cislo": {
+                "type": "string",
+                "example": 124658,
+                "maxLength": 24
+              },
+              "telefonne_cislo": {
+                "type": "string",
+                "maxLength": 16,
+                "example": "+421910123456"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "maxLength": 82,
+                "example": "janko.hrasko@example.com"
+              },
+              "heslo": {
+                "type": "string",
+                "example": "TajneHeslo123"
+              },
+              "rola": {
+                "type": "string",
+                "enum": [
+                  "uzivatel",
+                  "technik",
+                  "admin"
+                ]
+              },
+              "aktivny": {
+                "type": "boolean",
+                "example": true
+              },
+              "posledne_prihlasenie": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-07-21T17:23:56Z"
+              },
+              "posledna_zmena_hesla": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-07-21T17:23:56Z"
+              }
+            }
+          },
+          "fronta": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "example": 44
+              },
+              "nazov": {
+                "type": "string",
+                "example": "Hardvér - L1",
+                "maxLength": 128
+              }
+            }
+          },
+          "zariadenie": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "example": 8362
+              },
+              "nazov": {
+                "type": "string",
+                "example": "Monitor bežný",
+                "maxLength": 256
+              },
+              "nh_predpoklad": {
+                "type": "number",
+                "format": "float",
+                "example": 2.5
+              },
+              "nh_priemer": {
+                "type": "number",
+                "format": "float",
+                "example": 2.8
+              }
+            }
+          },
+          "zariadenie_nazov": {
+            "type": "string",
+            "example": "Dell 32 Plus (S3225QS)",
+            "maxLength": 256
+          },
+          "umiestnenie": {
+            "type": "string",
+            "example": "Budova S-06 m. č. 129",
+            "maxLength": 256
+          },
+          "popis": {
+            "type": "string",
+            "example": "PC je zapnutý, ale obrazovka je čierna, ani nesvieti indikátor."
+          },
+          "prilohy_zadavatel": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "uint64",
+                  "example": 9378
+                },
+                "nazov": {
+                  "type": "string",
+                  "example": "popis1.jpg",
+                  "maxLength": 128
+                },
+                "url": {
+                  "type": "string",
+                  "example": "https://example.com/media/e3900ee0-3d1f-4ab1-aa6d-8d9fd267b7bf.jpg"
+                }
+              }
+            }
+          },
+          "odstranenie_predpoklad": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          },
+          "odstranenie_skutocne": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          },
+          "zaciatok_riesenia": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          },
+          "koniec_riesenia": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          },
+          "vyriesene": {
+            "type": "boolean",
+            "example": false
+          },
+          "nh_predpoklad": {
+            "type": "number",
+            "format": "float",
+            "example": 3.4
+          },
+          "nh_skutocne": {
+            "type": "number",
+            "format": "float",
+            "example": 3
+          },
+          "vyriesil": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "example": 12
+              },
+              "meno": {
+                "type": "string",
+                "example": "Janko",
+                "maxLength": 64
+              },
+              "priezvisko": {
+                "type": "string",
+                "example": "Hraško",
+                "maxLength": 124
+              },
+              "cele_meno": {
+                "type": "string",
+                "example": "Mgr. Janko Hraško, MPH",
+                "maxLength": 200
+              },
+              "pozicia": {
+                "type": "string",
+                "example": "grafik",
+                "maxLength": 82
+              },
+              "osobne_cislo": {
+                "type": "string",
+                "example": 124658,
+                "maxLength": 24
+              },
+              "telefonne_cislo": {
+                "type": "string",
+                "maxLength": 16,
+                "example": "+421910123456"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "maxLength": 82,
+                "example": "janko.hrasko@example.com"
+              },
+              "heslo": {
+                "type": "string",
+                "example": "TajneHeslo123"
+              },
+              "rola": {
+                "type": "string",
+                "enum": [
+                  "uzivatel",
+                  "technik",
+                  "admin"
+                ]
+              },
+              "aktivny": {
+                "type": "boolean",
+                "example": true
+              },
+              "posledne_prihlasenie": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-07-21T17:23:56Z"
+              },
+              "posledna_zmena_hesla": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-07-21T17:23:56Z"
+              }
+            }
+          },
+          "popis_riesenia": {
+            "type": "string",
+            "example": "Na monitore bolo poškodené tlačidlo na zapínanie. Výmena monitora za nový kus."
+          },
+          "prilohy_riesitel": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "uint64",
+                  "example": 9378
+                },
+                "nazov": {
+                  "type": "string",
+                  "example": "popis1.jpg",
+                  "maxLength": 128
+                },
+                "url": {
+                  "type": "string",
+                  "example": "https://example.com/media/e3900ee0-3d1f-4ab1-aa6d-8d9fd267b7bf.jpg"
+                }
+              }
+            }
+          }
+        }
+      },
+      "TicketCU": {
+        "type": "object",
+        "properties": {
+          "fronta": {
+            "type": "number",
+            "format": "uint64",
+            "example": 44
+          },
+          "zariadenie": {
+            "type": "number",
+            "format": "uint64",
+            "example": 12
+          },
+          "zariadenie_nazov": {
+            "type": "string",
+            "example": "Dell 32 Plus (S3225QS)",
+            "maxLength": 256
+          },
+          "umiestnenie": {
+            "type": "string",
+            "example": "Budova S-06 m. č. 129",
+            "maxLength": 256
+          },
+          "popis": {
+            "type": "string",
+            "example": "PC je zapnutý, ale obrazovka je čierna, ani nesvieti indikátor."
+          },
+          "prilohy_zadavatel": {
+            "type": "object",
+            "properties": {
+              "filename": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "odstranenie_predpoklad": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          },
+          "odstranenie_skutocne": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          },
+          "zaciatok_riesenia": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          },
+          "koniec_riesenia": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          },
+          "vyriesene": {
+            "type": "boolean",
+            "example": false
+          },
+          "nh_predpoklad": {
+            "type": "number",
+            "format": "float",
+            "example": 3.4
+          },
+          "nh_skutocne": {
+            "type": "number",
+            "format": "float",
+            "example": 3
+          },
+          "vyriesil": {
+            "type": "number",
+            "format": "uint64",
+            "example": 44
+          },
+          "popis_riesenia": {
+            "type": "string",
+            "example": "Na monitore bolo poškodené tlačidlo na zapínanie. Výmena monitora za nový kus."
+          },
+          "prilohy_riesitel": {
+            "type": "object",
+            "properties": {
+              "filename": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Uzivatel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "uint64",
+            "example": 12
+          },
+          "meno": {
+            "type": "string",
+            "example": "Janko",
+            "maxLength": 64
+          },
+          "priezvisko": {
+            "type": "string",
+            "example": "Hraško",
+            "maxLength": 124
+          },
+          "cele_meno": {
+            "type": "string",
+            "example": "Mgr. Janko Hraško, MPH",
+            "maxLength": 200
+          },
+          "pozicia": {
+            "type": "string",
+            "example": "grafik",
+            "maxLength": 82
+          },
+          "osobne_cislo": {
+            "type": "string",
+            "example": 124658,
+            "maxLength": 24
+          },
+          "telefonne_cislo": {
+            "type": "string",
+            "maxLength": 16,
+            "example": "+421910123456"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 82,
+            "example": "janko.hrasko@example.com"
+          },
+          "heslo": {
+            "type": "string",
+            "example": "TajneHeslo123"
+          },
+          "rola": {
+            "type": "string",
+            "enum": [
+              "uzivatel",
+              "technik",
+              "admin"
+            ]
+          },
+          "aktivny": {
+            "type": "boolean",
+            "example": true
+          },
+          "posledne_prihlasenie": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          },
+          "posledna_zmena_hesla": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-21T17:23:56Z"
+          }
+        }
+      },
+      "Fronta": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "uint64",
+            "example": 44
+          },
+          "nazov": {
+            "type": "string",
+            "example": "Hardvér - L1",
+            "maxLength": 128
+          }
+        }
+      },
+      "Zariadenie": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "uint64",
+            "example": 8362
+          },
+          "nazov": {
+            "type": "string",
+            "example": "Monitor bežný",
+            "maxLength": 256
+          },
+          "nh_predpoklad": {
+            "type": "number",
+            "format": "float",
+            "example": 2.5
+          },
+          "nh_priemer": {
+            "type": "number",
+            "format": "float",
+            "example": 2.8
+          }
+        }
+      },
+      "Subor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "uint64",
+            "example": 9378
+          },
+          "nazov": {
+            "type": "string",
+            "example": "popis1.jpg",
+            "maxLength": 128
+          },
+          "url": {
+            "type": "string",
+            "example": "https://example.com/media/e3900ee0-3d1f-4ab1-aa6d-8d9fd267b7bf.jpg"
+          }
+        }
+      },
+      "UzivatelskaRola": {
+        "type": "string",
+        "enum": [
+          "uzivatel",
+          "technik",
+          "admin"
+        ]
+      },
+      "GenerickaChyba": {
+        "type": "object",
+        "properties": {
+          "kod": {
+            "type": "integer",
+            "format": "uint64",
+            "example": 43
+          },
+          "popis": {
+            "type": "string",
+            "example": "Užívateľ so zadaným ID neexistuje."
+          },
+          "traceId": {
+            "type": "string",
+            "format": "uuidv7",
+            "example": "019a6841-0d59-7d7e-8d9e-3623ee018dfb"
+          }
+        }
+      }
+    }
+  }
+}
