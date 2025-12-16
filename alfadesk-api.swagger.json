@@ -40,13 +40,13 @@
   ],
   "paths": {
     "/uzivatel/login": {
-      "get": {
+      "post": {
         "tags": [
           "uzivatel"
         ],
         "summary": "Prihlásenie užívateľa.",
-        "description": "Prihlási užívateľa do systému a vytvorí reláciu.",
-        "operationId": "prihlasitUzivatela",
+        "description": "Prihlási užívateľa do systému a vytvorí reláciu. Odošlite email a heslo v tele požiadavky. Po úspešnom prihlásení server vráti PHP session cookie (PHPSESSID), ktorý sa automaticky uloží a bude sa posielať so všetkými ďalšími požiadavkami.\n\n**Postup:**\n1. Zadajte váš email a heslo\n2. Kliknite \"Try it out\"\n3. Po úspešnom prihlásení bude session automaticky aktívna pre všetky ďalšie požiadavky\n4. Ak chcete sa odhlásiť, zavolajte POST /uzivatel/logout",
+        "operationId": "prihlasitUzivateleaPost",
         "requestBody": {
           "content": {
             "application/json": {
@@ -71,7 +71,16 @@
         },
         "responses": {
           "200": {
-            "description": "Užívateľ úspešne prihlásený",
+            "description": "Užívateľ úspešne prihlásený. Vrátená response obsahuje údaje užívateľa a v cookies je uložená PHP session.",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string",
+                  "example": "PHPSESSID=abcd1234efgh5678; Path=/; HttpOnly; Secure"
+                },
+                "description": "PHP session cookie - automaticky sa posiela v ďalších požiadavkách"
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -90,13 +99,18 @@
       }
     },
     "/uzivatel/logout": {
-      "get": {
+      "post": {
         "tags": [
           "uzivatel"
         ],
         "summary": "Odhlásenie užívateľa.",
-        "description": "Odhlási aktuálneho užívateľa a zruší reláciu.",
-        "operationId": "odhlasitUzivatela",
+        "description": "Odhlási aktuálneho užívateľa a zruší reláciu. Vyžaduje aktívnu reláciu.",
+        "operationId": "odhlasitUzivateleaPost",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Užívateľ úspešne odhlásený",
@@ -123,6 +137,11 @@
         "summary": "Získa užívateľa podľa ID.",
         "description": "Vráti údaje užívateľa podľa zadaného ID. Vyžaduje administrátorské oprávnenie.",
         "operationId": "ziskatUzivatela",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -166,6 +185,11 @@
         "summary": "Aktualizuje užívateľa.",
         "description": "Aktualizuje údaje užívateľa podľa ID. Vyžaduje administrátorské oprávnenie.",
         "operationId": "aktualizovatUzivatela",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -219,6 +243,11 @@
         "summary": "Odstráni užívateľa.",
         "description": "Odstráni užívateľa podľa ID. Vyžaduje administrátorské oprávnenie.",
         "operationId": "odstranitUzivatela",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -270,6 +299,11 @@
         "summary": "Vytvorí nového užívateľa.",
         "description": "Vytvorí nového užívateľa v systéme. Vyžaduje administrátorské oprávnenie.",
         "operationId": "pridatUzivatela",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -311,6 +345,11 @@
         "summary": "Získa zoznam ticketov s filtrami.",
         "description": "Vráti zoznam ticketov podľa zadaných filtrov. Bežný užívateľ vidí len svoje vytvorené tickety, administrátor vidí všetky.",
         "operationId": "zoznamTicketov",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -410,6 +449,11 @@
         "summary": "Vytvorí novú požiadavku.",
         "description": "Vytvorí novú požiadavku so zadanými parametrami.",
         "operationId": "pridatTicket",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -448,6 +492,11 @@
         "summary": "Získa požiadavku podľa ID.",
         "description": "Vráti požiadavku podľa zadaného ID.",
         "operationId": "ziskatTicket",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -488,6 +537,11 @@
         "summary": "Aktualizuje požiadavku.",
         "description": "Aktualizuje požiadavku podľa ID. Bežný užívateľ môže upravovať len svoje tickety, technik a admin všetky.",
         "operationId": "aktualizovatTicket",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -543,6 +597,11 @@
         "summary": "Získa frontu podľa ID.",
         "description": "Vráti frontu podľa zadaného ID.",
         "operationId": "ziskatFrontu",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -583,6 +642,11 @@
         "summary": "Aktualizuje frontu.",
         "description": "Aktualizuje frontu podľa ID.",
         "operationId": "aktualizovatFrontu",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -633,6 +697,11 @@
         "summary": "Odstráni frontu.",
         "description": "Odstráni frontu podľa ID.",
         "operationId": "odstranitFrontu",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -681,6 +750,11 @@
         "summary": "Vytvorí novú frontu.",
         "description": "Vytvorí novú frontu v systéme.",
         "operationId": "pridatFrontu",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -719,6 +793,11 @@
         "summary": "Získa zariadenie podľa ID.",
         "description": "Vráti zariadenie podľa zadaného ID.",
         "operationId": "ziskatZariadenie",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -759,6 +838,11 @@
         "summary": "Aktualizuje zariadenie.",
         "description": "Aktualizuje zariadenie podľa ID.",
         "operationId": "aktualizovatZariadenie",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -809,6 +893,11 @@
         "summary": "Odstráni zariadenie.",
         "description": "Odstráni zariadenie podľa ID.",
         "operationId": "odstranitZariadenie",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "id",
@@ -857,6 +946,11 @@
         "summary": "Vytvorí nové zariadenie.",
         "description": "Vytvorí nové zariadenie v systéme.",
         "operationId": "pridatZariadenie",
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -889,6 +983,14 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "SessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "PHPSESSID",
+        "description": "PHP Session Authentication. Po prihlásení cez /uzivatel/login endpoint bude server vracať session cookie. Táto session sa automaticky posiela so všetkými ďalšími požiadavkami."
+      }
+    },
     "schemas": {
       "TicketR": {
         "type": "object",

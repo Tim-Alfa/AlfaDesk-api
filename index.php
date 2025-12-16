@@ -17,6 +17,8 @@ use AlfaDesk\API\APICesta\GET_Uzivatel_id;
 use AlfaDesk\API\APICesta\POST_Uzivatel;
 use AlfaDesk\API\APICesta\PATCH_Uzivatel_id;
 use AlfaDesk\API\APICesta\DELETE_Uzivatel_id;
+use AlfaDesk\API\APICesta\POST_Uzivatel_Login;
+use AlfaDesk\API\APICesta\POST_Uzivatel_Logout;
 use Slim\Factory\AppFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -30,11 +32,11 @@ $app->addRoutingMiddleware();
 
 $app->setBasePath('/php/AlfaDesk-api/AlfaDesk-api');
 
-$app->get("/uzivatel/login", function ($request, $response, $args) {
-  return \AlfaDesk\API\APICesta\GET_Uzivatel_Login::spusti($request, $response, $args);
+$app->post("/uzivatel/login", function ($request, $response, $args) {
+  return POST_Uzivatel_Login::spusti($request, $response, $args);
 });
-$app->get("/uzivatel/logout", function ($request, $response, $args) {
-  return \AlfaDesk\API\APICesta\GET_Uzivatel_Logout::spusti($request, $response, $args);
+$app->post("/uzivatel/logout", function ($request, $response, $args) {
+  return POST_Uzivatel_Logout::spusti($request, $response, $args);
 });
 $app->get("/ticket", function ($request, $response, $args) {
   return GET_Ticket::spusti($request, $response, $args);
