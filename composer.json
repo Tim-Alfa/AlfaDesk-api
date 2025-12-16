@@ -1,0 +1,13 @@
+{
+    "require": {
+        "doctrine/dbal": "^4.2",
+        "monolog/monolog": "^3.9",
+        "slim/slim": "^4.15",
+        "slim/psr7": "^1.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "AlfaDesk\\API\\": "src/"
+        }
+    }
+}
